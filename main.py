@@ -18,13 +18,14 @@ with open("data.json", "r") as f:
 
 
 def check_pos(data_input):
+    """Erfragt die aktuelle ISS Position per 'request' und vergleicht diese mit der Nutzerposition.
+    Bei einem Unterschied +-5 wird Schritt 2 eingeleitet."""
     data = data_input
     print(f"Schritt 1: Prüfe LAT/LNG - '{data['name']}'")
 
     my_lat = float(data["my_lat"])
     my_lng = float(data["my_lng"])
 
-    # ----------------------------------ISS API ----------------------------------
     response = requests.get(url="http://api.open-notify.org/iss-now.json")
     response.raise_for_status()
     resp_data = response.json()
@@ -42,10 +43,11 @@ def check_pos(data_input):
 
 
 def check_night(data_input):
+    """Erfragt die aktuelle Uhrzeit sowie die Nachtstunden (Sonnenuntergang - Sonnenaufgang) an der Position des Users.
+    Handelt es sich um eine Nachtstunde, wird Schritt 3 eingeleitet."""
     data = data_input
     print(f"Schritt 2: Prüfe NIGHTTIME - '{data['name']}'")
 
-    # --------------------------------WEATHER API --------------------------------
     parameters = {
         "lat": data["my_lat"],
         "lng": data["my_lng"],
@@ -58,7 +60,6 @@ def check_night(data_input):
     sunrise = int(resp_data["results"]["sunrise"].split("T")[1].split(":")[0])
     sunset = int(resp_data["results"]["sunset"].split("T")[1].split(":")[0])
 
-    # --------------------------------WEATHER API --------------------------------
     today = dt.datetime.now()
     hour = today.hour
 
@@ -69,6 +70,8 @@ def check_night(data_input):
 
 
 def prep_mail(data_input):
+    """Bereitet den E-Mailversand vor: Liest die Textvorlage aus, überschreibt die benötigten Werte und leitet den
+    Versandprozess ein."""
     data = data_input
     print(f"Schritt 3: Vorbereitung E-MAIL - '{data['name']}'")
 
@@ -90,6 +93,7 @@ def prep_mail(data_input):
 
 
 def send_mail(data_input, mail_text):
+    """Versendet eine E-Mail mit der eingespeisten Textvorlage. Leitet dann den Log-Prozess ein."""
     data = data_input
 
     print(f"Schritt 4: Senden E-MAIL - '{data['name']}'")
@@ -104,6 +108,8 @@ def send_mail(data_input, mail_text):
 
 
 def log_file(data_input):
+    """Erstellt einen Log-Eintrag im Textfile, sobald eine E-Mail erfolgreich verschickt wurde.
+    Fügt den Namen der Liste 'send' hinzu"""
     global send
     data = data_input
     datum = dt.datetime.now()
@@ -115,6 +121,7 @@ def log_file(data_input):
 
 
 def countdown(s):
+    """Countdown. Return 'True' sobald abgelaufen."""
     print(f"Countdown gestartet: {s} sec.")
     seconds = s
     while seconds > 0:
