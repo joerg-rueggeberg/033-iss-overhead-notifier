@@ -9,6 +9,7 @@ MY_EMAIL = "my@mail.de"
 MY_PASSWORD = "mypass"
 MY_SMTP = "my.smtp.com"
 MY_PORT = 123
+MY_SUBJECT = "ISS im Himmel!"
 
 send = []
 
@@ -21,7 +22,7 @@ def check_pos(data_input):
     """Erfragt die aktuelle ISS Position per 'request' und vergleicht diese mit der Nutzerposition.
     Bei einem Unterschied +-5 wird Schritt 2 eingeleitet."""
     data = data_input
-    print(f"Schritt 1: Prüfe LAT/LNG - '{data['name']}'")
+    print(f"Check 1: LAT/LNG - '{data['name']}'")
 
     my_lat = float(data["my_lat"])
     my_lng = float(data["my_lng"])
@@ -39,14 +40,14 @@ def check_pos(data_input):
     if my_lat - 5 <= iss_lat <= my_lat + 5 and my_lng - 5 <= iss_lng <= my_lng + 5:
         check_night(data)
     else:
-        print("-- ISS nicht in der Nähe")
+        print("-- ISS not in range")
 
 
 def check_night(data_input):
     """Erfragt die aktuelle Uhrzeit sowie die Nachtstunden (Sonnenuntergang - Sonnenaufgang) an der Position des Users.
     Handelt es sich um eine Nachtstunde, wird Schritt 3 eingeleitet."""
     data = data_input
-    print(f"Schritt 2: Prüfe NIGHTTIME - '{data['name']}'")
+    print(f"Check 2: NIGHTTIME - '{data['name']}'")
 
     parameters = {
         "lat": data["my_lat"],
@@ -66,14 +67,14 @@ def check_night(data_input):
     if hour > sunset or hour < sunrise:
         prep_mail(data)
     else:
-        print("-- Nicht dunkel genug")
+        print("-- no nighttime")
 
 
 def prep_mail(data_input):
     """Bereitet den E-Mailversand vor: Liest die Textvorlage aus, überschreibt die benötigten Werte und leitet den
     Versandprozess ein."""
     data = data_input
-    print(f"Schritt 3: Vorbereitung E-MAIL - '{data['name']}'")
+    print(f"Check 3: preparing E-MAIL - '{data['name']}'")
 
     name = data['name']
     iss_lat = str(data['iss_lat'])
@@ -96,14 +97,14 @@ def send_mail(data_input, mail_text):
     """Versendet eine E-Mail mit der eingespeisten Textvorlage. Leitet dann den Log-Prozess ein."""
     data = data_input
 
-    print(f"Schritt 4: Senden E-MAIL - '{data['name']}'")
+    print(f"Check 4: sending E-MAIL - '{data['name']}'")
     e_mail = data["email"]
     with smtplib.SMTP(MY_SMTP, port=MY_PORT) as con:
         con.starttls()
         con.login(user=MY_EMAIL, password=MY_PASSWORD)
         con.sendmail(from_addr=MY_EMAIL, to_addrs=e_mail,
-                     msg=f"Subject: ISS zu sehen!\n\n{mail_text}")
-    print(f"ERFOLGREICH: E-Mail an '{data['name']}' gesendet.")
+                     msg=f"Subject: {MY_SUBJECT}\n\n{mail_text}")
+    print(f"SUCCESS: E-Mail sent to '{data['name']}'.")
     log_file(data)
 
 
@@ -122,7 +123,7 @@ def log_file(data_input):
 
 def countdown(s):
     """Countdown. Return 'True' sobald abgelaufen."""
-    print(f"Countdown gestartet: {s} sec.")
+    print(f"Countdown started: {s} sec.")
     seconds = s
     while seconds > 0:
         dt.timedelta(seconds=seconds)
