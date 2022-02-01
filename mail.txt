@@ -1,0 +1,11 @@
+Hey [NAME],
+
+wenn du jetzt hinausgehst, hast du gute Chancen die ISS am Himmel zu sehen!
+
+Diese befindet sich grade auf Position: 'Latitude: [ISS_LAT], Longitude: [ISS_LNG]'.
+Deine Position: 'Latitude: [LAT], Longitude: [LNG]'.
+
+Viel Erfolg bei der Sichtung!
+
+Dein ISS-Sichtungs-Service,
+Jörg

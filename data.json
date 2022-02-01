@@ -1,0 +1,11 @@
+{
+    "1": {
+        "name": "name",
+        "email": "your@e-mail.com",
+        "my_lat": 19.896767,
+        "my_lng": -155.582779,
+        "iss_lat": 0,
+        "iss_lng": 0,
+        "status": 0
+    }
+}
